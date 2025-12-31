@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Code Zenith UI</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        body {
+            background-color: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            color: white;
+        }
+
+        /* The Main Neon Box */
+        .container {
+            background-color: #000;
+            border: 2px solid #00ffff;
+            box-shadow: 0 0 15px #00ffff55, inset 0 0 15px #00ffff22;
+            position: relative;
+            overflow: hidden;
+            width: 850px;
+            height: 500px;
+            display: flex;
+        }
+
+        /* Split Background Effect */
+        .background-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #001a1a 0%, #000000 100%);
+            z-index: 1;
+        }
+
+        .background-overlay::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: #0d2e2e;
+            clip-path: polygon(100% 0, 0% 100%, 100% 100%); /* Diagonal Split */
+            transition: 0.6s ease-in-out;
+        }
+
+        .container.active .background-overlay::before {
+            clip-path: polygon(0 0, 0 100%, 100% 0); /* Reverse Diagonal */
+        }
+
+        /* Forms */
+        .form-box {
+            position: absolute;
+            width: 50%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 40px;
+            z-index: 10;
+            transition: 0.6s ease-in-out;
+        }
+
+        .login-box { left: 0; }
+        .register-box { left: 100%; opacity: 0; }
+
+        .container.active .login-box { left: -50%; opacity: 0; }
+        .container.active .register-box { left: 50%; opacity: 1; }
+
+        /* Text & Inputs */
+        h2 { font-size: 2.5rem; margin-bottom: 30px; letter-spacing: 2px; }
+        
+        .input-group {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .input-group i {
+            position: absolute;
+            right: 15px;
+            top: 12px;
+            color: #888;
+        }
+
+        input {
+            width: 100%;
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid #444;
+            padding: 10px 0;
+            color: white;
+            outline: none;
+            font-size: 1rem;
+        }
+
+        input:focus { border-bottom-color: #00ffff; }
+
+        button {
+            background: #00ffff;
+            color: black;
+            border: none;
+            padding: 12px;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: 0.3s;
+            text-transform: uppercase;
+        }
+
+        button:hover {
+            box-shadow: 0 0 20px #00ffff;
+        }
+
+        .toggle-text {
+            margin-top: 15px;
+            font-size: 0.9rem;
+            color: #ccc;
+        }
+
+        .toggle-text span {
+            color: #00ffff;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        /* Welcome Text Side */
+        .info-side {
+            position: absolute;
+            right: 0;
+            width: 50%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 5;
+            transition: 0.6s ease-in-out;
+        }
+
+        .info-side h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            line-height: 1;
+            text-align: right;
+            padding-right: 40px;
+        }
+
+        .container.active .info-side {
+            right: 50%;
+            text-align: left;
+        }
+
+        .container.active .info-side h1 {
+            text-align: left;
+            padding-right: 0;
+            padding-left: 40px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container" id="container">
+        <div class="background-overlay"></div>
+
+        <div class="form-box login-box">
+            <h2>Login</h2>
+            <div class="input-group">
+                <input type="text" placeholder="Username">
+                <i class="fa-solid fa-user"></i>
+            </div>
+            <div class="input-group">
+                <input type="password" placeholder="Password">
+                <i class="fa-solid fa-lock"></i>
+            </div>
+            <button>Login</button>
+            <p class="toggle-text">Don't have an account? <span id="to-register">Sign Up</span></p>
+        </div>
+
+        <div class="form-box register-box">
+            <h2>Register</h2>
+            <div class="input-group">
+                <input type="text" placeholder="Username">
+                <i class="fa-solid fa-user"></i>
+            </div>
+            <div class="input-group">
+                <input type="email" placeholder="Email">
+                <i class="fa-solid fa-envelope"></i>
+            </div>
+            <div class="input-group">
+                <input type="password" placeholder="Password">
+                <i class="fa-solid fa-lock"></i>
+            </div>
+            <button>Register</button>
+            <p class="toggle-text">Already have an account? <span id="to-login">Sign In</span></p>
+        </div>
+
+        <div class="info-side">
+            <h1 id="welcome-text">WELCOME<br>BACK!</h1>
+        </div>
+    </div>
+
+    <script>
+        const container = document.getElementById('container');
+        const toRegister = document.getElementById('to-register');
+        const toLogin = document.getElementById('to-login');
+        const welcomeText = document.getElementById('welcome-text');
+
+        toRegister.addEventListener('click', () => {
+            container.classList.add('active');
+            welcomeText.innerHTML = "WELCOME!";
+        });
+
+        toLogin.addEventListener('click', () => {
+            container.classList.remove('active');
+            welcomeText.innerHTML = "WELCOME<br>BACK!";
+        });
+    </script>
+</body>
+</html>
